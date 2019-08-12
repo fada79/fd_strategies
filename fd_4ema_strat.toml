@@ -1,0 +1,12 @@
+[EmaPeriods]
+blue = 9
+green = 13
+yellow = 21
+red = 55
+
+[thresholds]
+historySize = 55
+entrySignalPersist = 2
+exitSignalPersist = 2
+stopLossPct = 3
+dEmaPct = 4
