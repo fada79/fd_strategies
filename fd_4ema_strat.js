@@ -45,7 +45,6 @@ method.checkIndicators = function() {
 	this.yellowEMA = this.talibIndicators.yellowEMA.result.outReal;
 	this.redEMA = this.talibIndicators.redEMA.result.outReal;
 	this.dEmaPct = (this.blueEMA - this.redEMA)/this.candle.close * 100;
-	//console.log("dEmaPct => " + this.dEmaPct);
 }
 
 method.checkLongEntry = function() {
@@ -57,6 +56,7 @@ method.checkLongEntry = function() {
                 if ( this.trade.entrySignalPersist >= 
 					this.settings.thresholds.entrySignalPersist ) {
 		        this.advice('long');
+                        log.debug("long advised");
 		        this.trade.advised = true;
 			this.trade.direction = 'long';
 		        this.trade.entryPrice = this.candle.close;
@@ -66,6 +66,7 @@ method.checkLongEntry = function() {
                 }
 	} else if (!this.trade.advised) {
                 this.trade.entrySignalPersist = 0;
+                this.trade.direction = 'none';
         }
 }
 
@@ -73,11 +74,12 @@ method.checkShortEntry = function() {
 	if ( this.blueEMA < this.greenEMA && 
 			this.greenEMA < this.yellowEMA && 
                         this.yellowEMA < this.redEMA && 
-			!this.trade.advised &&
-			this.trade.direction != 'long' ) {
+			!this.trade.advised && 
+                        this.trade.direction != 'long' ) {
                 if ( this.trade.entrySignalPersist >= 
 					this.settings.thresholds.entrySignalPersist ) {
 		        this.advice('short');
+                        log.debug("short entry advised");
 		        this.trade.advised = true;
 			this.trade.direction = 'short';
 		        this.trade.entryPrice = this.candle.close;
@@ -85,8 +87,9 @@ method.checkShortEntry = function() {
                         this.trade.entrySignalPersist++;
 			this.trade.direction = 'short';
                 }
-	} else if (!this.trade.advised) {
+	} else if ( !this.trade.advised ) {
                 this.trade.entrySignalPersist = 0;
+                this.trade.direction = 'none';
         }
 }
 
@@ -98,13 +101,14 @@ method.checkLongExit = function() {
                 if ( this.trade.exitSignalPersist >= 
 				this.settings.thresholds.exitSignalPersist ) {
 		        this.advice('short');
+                        log.debug("long exit advised");
 		        this.trade.exitPrice = this.candle.close;
 		        this.trades.push(this.trade);
 		        this.resetTrade();
                 } else {
                         this.trade.exitSignalPersist++;
                 } 
-	} else if (this.trade.advised) {
+	} else if (this.trade.advised && this.trade.direction == 'long' ) {
                 this.trade.exitSignalPersist = 0;
         }
 }
@@ -117,13 +121,14 @@ method.checkShortExit = function() {
                 if ( this.trade.exitSignalPersist >= 
 				this.settings.thresholds.exitSignalPersist ) {
 		        this.advice('long');
+                        log.debug("short exit advised");
 		        this.trade.exitPrice = this.candle.close;
 		        this.trades.push(this.trade);
 		        this.resetTrade();
                 } else {
                         this.trade.exitSignalPersist++;
                 } 
-	} else if (this.trade.advised) {
+	} else if (this.trade.advised && this.trade.direction == 'short' ) {
                 this.trade.exitSignalPersist = 0;
         }
 }
@@ -134,6 +139,7 @@ method.checkLongStopLoss = function() {
 			this.trade.advised && 
 			this.trade.direction == 'long' ) {
 		this.advice('short');
+                        log.debug("long stop loss advised");
 		this.trade.exitPrice = this.candle.close;
 		this.trades.push(this.trade);
 		this.resetTrade();
@@ -147,6 +153,7 @@ method.checkShortStopLoss = function() {
 			this.trade.direction == 'short' ) {
 		//close the long trade
 		this.advice('long');
+                log.debug("short stop loss advised");
 		this.trade.exitPrice = this.candle.close;
 		this.trades.push(this.trade);
 		this.resetTrade();
@@ -156,34 +163,22 @@ method.checkShortStopLoss = function() {
 method.check = function() {
 	this.checkIndicators();
 
-//////////////////////////////////////////////////
-
-	//
-	// Long entry
-	// Short entry
-	//
-	this.checkLongEntry();
+	//  entry
+	//this.checkLongEntry();
 	this.checkShortEntry();
 
-	//
-	// Long Exit
-	// Short Exit
-	//
+	//  Exit
 	this.checkLongExit();
 	this.checkShortExit();
 
-	//
-	// Long Stop Loss
-	// Short Stop Loss
-	//
+	// Stop Loss
 	this.checkLongStopLoss();
 	this.checkShortStopLoss();
 
-//////////////////////////////////////////////////
 }
 
 method.end = function() {
-	console.log(">>>>>>>>>>>TRADES>>>>>>>>>>>>>>>>>>>\n" + JSON.stringify(this.trades));
+	log.debug(">>>>>>>>>>>TRADES>>>>>>>>>>>>>>>>>>>\n" + JSON.stringify(this.trades));
 
 }
 

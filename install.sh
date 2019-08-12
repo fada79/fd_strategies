@@ -1,7 +1,8 @@
 #!/bin/sh
 
-GEKKO_STRAT_PATH=../gekko3/strategies
+GEKKO_BASE=../gekko3
+GEKKO_STRAT=$GEKKO_BASE/strategies
+GEKKO_CONFIG_STRAT=$GEKKO_BASE/config/strategies
 
-cp -b *.js $GEKKO_STRAT_PATH
-
-
+cp -b *.js $GEKKO_STRAT
+cp -b *.toml $GEKKO_CONFIG_STRAT
