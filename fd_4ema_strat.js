@@ -139,7 +139,7 @@ method.checkLongStopLoss = function() {
 			this.trade.advised && 
 			this.trade.direction == 'long' ) {
 		this.advice('short');
-                        log.debug("long stop loss advised");
+                log.debug("long stop loss advised");
 		this.trade.exitPrice = this.candle.close;
 		this.trades.push(this.trade);
 		this.resetTrade();
@@ -164,7 +164,7 @@ method.check = function() {
 	this.checkIndicators();
 
 	//  entry
-	//this.checkLongEntry();
+	this.checkLongEntry();
 	this.checkShortEntry();
 
 	//  Exit
