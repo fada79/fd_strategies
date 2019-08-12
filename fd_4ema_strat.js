@@ -48,48 +48,42 @@ method.checkIndicators = function() {
 }
 
 method.checkLongEntry = function() {
-	if ( this.blueEMA > this.greenEMA && 
-			this.greenEMA > this.yellowEMA && 
-                        this.yellowEMA > this.redEMA && 
-			!this.trade.advised && 
-			this.trade.direction != 'short' ) {
-                if ( this.trade.entrySignalPersist >= 
-					this.settings.thresholds.entrySignalPersist ) {
-		        this.advice('long');
-                        log.debug("long advised");
-		        this.trade.advised = true;
-			this.trade.direction = 'long';
-		        this.trade.entryPrice = this.candle.close;
-                } else {
-                        this.trade.entrySignalPersist++;
-			this.trade.direction = 'long';
+        if ( !this.trade.advised && this.trade.direction != 'short' ) {
+	        if ( this.blueEMA > this.greenEMA && this.greenEMA > this.yellowEMA && this.yellowEMA > this.redEMA ) {
+		        this.trade.direction = 'long';
+                        if ( this.trade.entrySignalPersist >= this.settings.thresholds.entrySignalPersist ) {
+		                this.advice('long');
+                                log.debug("long advised");
+		                this.trade.advised = true;
+		                this.trade.entryPrice = this.candle.close;
+                                this.trade.entrySignalPersist = 0;
+                        } else {
+                                this.trade.entrySignalPersist++;
+                        }
+	        } else {
+                        this.trade.entrySignalPersist = 0;
+                        this.trade.direction = 'none';
                 }
-	} else if (!this.trade.advised) {
-                this.trade.entrySignalPersist = 0;
-                this.trade.direction = 'none';
         }
 }
 
 method.checkShortEntry = function() {
-	if ( this.blueEMA < this.greenEMA && 
-			this.greenEMA < this.yellowEMA && 
-                        this.yellowEMA < this.redEMA && 
-			!this.trade.advised && 
-                        this.trade.direction != 'long' ) {
-                if ( this.trade.entrySignalPersist >= 
-					this.settings.thresholds.entrySignalPersist ) {
-		        this.advice('short');
-                        log.debug("short entry advised");
-		        this.trade.advised = true;
+        if ( !this.trade.advised && this.trade.direction != 'long' ) {
+	        if ( this.blueEMA < this.greenEMA && this.greenEMA < this.yellowEMA && this.yellowEMA < this.redEMA ) {
 			this.trade.direction = 'short';
-		        this.trade.entryPrice = this.candle.close;
-                } else {
-                        this.trade.entrySignalPersist++;
-			this.trade.direction = 'short';
+                        if ( this.trade.entrySignalPersist >= this.settings.thresholds.entrySignalPersist ) {
+		                this.advice('short');
+                                log.debug("short entry advised");
+		                this.trade.advised = true;
+		                this.trade.entryPrice = this.candle.close;
+                                this.trade.entrySignalPersist = 0;
+                        } else {
+                                this.trade.entrySignalPersist++;
+                        }
+	        } else {
+                        this.trade.entrySignalPersist = 0;
+                        this.trade.direction = 'none';
                 }
-	} else if ( !this.trade.advised ) {
-                this.trade.entrySignalPersist = 0;
-                this.trade.direction = 'none';
         }
 }
 
