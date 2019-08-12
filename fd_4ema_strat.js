@@ -18,21 +18,11 @@ method.init = function() {
 	this.name = 'FD 4 EMA Strategy';
 	this.requiredHistory = this.settings.thresholds.historySize;
 	this.resetTrade();
-	
 	this.trades = [];
-	this.addTalibIndicator('blueEMA',   
-		'ema', 
-		{optInTimePeriod : this.settings.EmaPeriods.blue});
-	this.addTalibIndicator('greenEMA',  
-		'ema', 
-		{optInTimePeriod : this.settings.EmaPeriods.green});
-	this.addTalibIndicator('yellowEMA', 
-		'ema', 
-		{optInTimePeriod : this.settings.EmaPeriods.yellow});
-	this.addTalibIndicator('redEMA',    
-		'ema', 
-		{optInTimePeriod : this.settings.EmaPeriods.red});
-
+	this.addTalibIndicator('blueEMA', 'ema', {optInTimePeriod : this.settings.EmaPeriods.blue});
+	this.addTalibIndicator('greenEMA', 'ema', {optInTimePeriod : this.settings.EmaPeriods.green});
+	this.addTalibIndicator('yellowEMA', 'ema', {optInTimePeriod : this.settings.EmaPeriods.yellow});
+	this.addTalibIndicator('redEMA', 'ema', {optInTimePeriod : this.settings.EmaPeriods.red});
 }
 
 method.update = function() {}
@@ -44,7 +34,7 @@ method.checkIndicators = function() {
 	this.greenEMA = this.talibIndicators.greenEMA.result.outReal;
 	this.yellowEMA = this.talibIndicators.yellowEMA.result.outReal;
 	this.redEMA = this.talibIndicators.redEMA.result.outReal;
-	this.dEmaPct = (this.blueEMA - this.redEMA)/this.candle.close * 100;
+	this.dEmaPct = (this.blueEMA - this.redEMA)/this.redEMA * 100;
 }
 
 method.checkLongEntry = function() {
@@ -157,7 +147,7 @@ method.checkShortStopLoss = function() {
 method.check = function() {
 	this.checkIndicators();
 
-	//  entry
+	//  Entry
 	this.checkLongEntry();
 	this.checkShortEntry();
 
@@ -168,12 +158,10 @@ method.check = function() {
 	// Stop Loss
 	this.checkLongStopLoss();
 	this.checkShortStopLoss();
-
 }
 
 method.end = function() {
 	log.debug(">>>>>>>>>>>TRADES>>>>>>>>>>>>>>>>>>>\n" + JSON.stringify(this.trades));
-
 }
 
 module.exports = method;
