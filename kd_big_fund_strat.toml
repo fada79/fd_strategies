@@ -1,0 +1,5 @@
+minMaxPeriod = 50
+atrPeriod = 15
+nbAtrTls = 3
+shortSmaPeriod = 50
+longSmaPeriod = 100
