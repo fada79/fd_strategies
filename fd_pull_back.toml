@@ -1,0 +1,6 @@
+stShortPeriod = 5
+stLongPeriod = 10
+ltShortPeriod = 50
+ltLongPeriod = 100
+tsAtrPeriod = 14
+nbAtrStop = 3
